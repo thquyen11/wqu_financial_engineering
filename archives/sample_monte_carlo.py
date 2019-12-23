@@ -9,7 +9,7 @@ random.seed(0)
 f_estimates = [None]*50
 f_std = [None]*50
 
-for i in range(0, 50):
+for i in range(50):
     random_array = uniform.rvs(size = i*1000)*np.pi
     f_values_array = np.sin(random_array)*np.pi
     f_estimates[i] = np.mean(f_values_array)
