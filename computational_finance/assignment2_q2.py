@@ -39,11 +39,11 @@ if __name__ == "__main__":
     # BSM for Vanilla European Put Option
     put_estimate_BSM = pricePutOptionBSM(initial_stock_price, strike_price, risk_free_rate, maturity, sigma)
 
-plt.xlabel("Sample Size")
-plt.ylabel("Monte Carlo Estimate")
-plt.plot(put_mean_MC, ".")
-plt.plot([put_estimate_BSM]*50)
-plt.plot(put_estimate_BSM+3*np.array(put_std_MC), 'r')
-plt.plot(put_estimate_BSM-3*np.array(put_std_MC), 'r')
-plt.show()
+    plt.xlabel("Sample Size")
+    plt.ylabel("Monte Carlo Estimate")
+    plt.plot(put_mean_MC, ".")
+    plt.plot([put_estimate_BSM]*50)
+    plt.plot(put_estimate_BSM+3*np.array(put_std_MC), 'r')
+    plt.plot(put_estimate_BSM-3*np.array(put_std_MC), 'r')
+    plt.show()
 
