@@ -17,6 +17,7 @@ class Vanila_Option:
         random.seed(0)
         option_mean_MC = [None]*simulation
         option_std_MC = [None]*simulation
+        # There are 2 methods: MC a.k.a MonteCarlo and BSM a.k.a Black Scholes
         if method == 'MC':
             for i in range(1, simulation + 1):
                 sample_size = 1000*i
@@ -29,40 +30,38 @@ class Vanila_Option:
                 option_std_MC[i-1] = np.std(option_value_array)/np.sqrt(sample_size)
             return (option_mean_MC, option_std_MC)
         elif method == 'BSM':
-            # self._option_estimate_BSM = self.priceCallBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma) if option == 'call' else self.pricePutBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma)
             if option == 'call':
                 return (self.priceCallBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma), self.sigma)
             else:
                 return (self.pricePutBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma), self.sigma)
-        # return self._option_mean_MC if method == 'MC' else [self._option_estimate_BSM]
 
-
+    # Calcualte future stock price at maturity
     def __terminalStockPrice(self, initial_stock_price, risk_free_rate, sigma, Z, maturity):
         return initial_stock_price*np.exp((risk_free_rate-sigma**2/2)*maturity + sigma*np.sqrt(maturity)*Z)
 
-
+    # Pricing Call Option via MonteCarlo, return a list
     def priceCallMC_List(self, terminal_stockprice, strike_price, risk_free_rate, maturity):
         return np.exp(-risk_free_rate*maturity)*np.maximum(terminal_stockprice-strike_price, 0)
     
-    
+    # Pricing Call Option via MonteCarlo, return a value
     def priceCallMC(self, terminal_stockprice, strike_price, risk_free_rate, maturity):
         return np.exp(-risk_free_rate*maturity)*np.max(terminal_stockprice-strike_price, 0)
 
-
+    # Pricing Put Option via MonteCarlo, return a list
     def pricePutMC_List(self, terminal_stockprice, strike_price, risk_free_rate, maturity):
         return np.exp(-risk_free_rate*maturity)*np.maximum(strike_price-terminal_stockprice, 0)
     
-    
+    # Pricing Put Option via MonteCarlo, return a value
     def pricePutMC(self, terminal_stockprice, strike_price, risk_free_rate, maturity):
         return np.exp(-risk_free_rate*maturity)*np.max(strike_price-terminal_stockprice, 0)
 
-
+    # Pricing Call Option via Black Scholes Model
     def priceCallBSM(self, initial_stock_price, strike_price, risk_free_rate, maturity, sigma):
         d1 = self.__calcualte_d1(initial_stock_price, strike_price, risk_free_rate, sigma, maturity)
         d2 = self.__calculate_d2(d1, sigma, maturity)
         return initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*strike_price*math.exp(-risk_free_rate*maturity)
 
-
+    # Pricing Put Option via Black Scholes Model
     def pricePutBSM(self, initial_stock_price, strike_price, risk_free_rate, maturity, sigma):
         d1 = self.__calcualte_d1(initial_stock_price, strike_price, risk_free_rate, sigma, maturity)
         d2 = self.__calculate_d2(d1, sigma, maturity)
@@ -91,6 +90,7 @@ class Barrier_Option(Vanila_Option):
         super(Barrier_Option, self).__init__(initial_stock_price, risk_free_rate, sigma, strike_price, maturity)
         self.barrier_price = barrier_price
     
+    # Pricing barrier option via MonteCarlo
     def valueWithoutCVA(self, option = 'call', simulation = 0, steps = 1):
         random.seed(0)
         dT = self.maturity/steps
@@ -112,15 +112,15 @@ class Barrier_Option(Vanila_Option):
 
         return (option_mean_MC, option_std_MC)
 
-
-    def valueWithCVA(self, option = 'call', simulation = 0, steps = 1, firm_initial_value = 0, firm_sigma = 0, firm_debt = 0, recovery_rate = 0, firm_corr = 0):
+    # Pricing barrier option via MonteCarlo, considering the CVA
+    def valueWithCVA(self, option = 'call', simulation = 0, steps = 1,  firm_sigma = 0, firm_debt = 0, recovery_rate = 0, firm_corr = 0, firm_initial_value = 100):
         random.seed(0)
         dT = self.maturity/steps
         option_mean_MC = [None]*simulation
         option_std_MC = [None]*simulation
         cva_estimates = [None]*simulation
         cva_std = [None]*simulation
-        corr_tested = [firm_corr]*simulation if firm_corr != None else np.linspace(-1, 1, simulation)
+        corr_tested = [firm_corr]*simulation if firm_corr != 0 else np.linspace(-1, 1, simulation)
 
         for i in range(1, simulation + 1):
             sample_size = 1000*i
@@ -151,7 +151,7 @@ class Barrier_Option(Vanila_Option):
 
         return (option_mean_MC, option_std_MC, cva_estimates, cva_std)
 
-
+    # Calculate Value at Risk for barrier option
     def calculateVaR(self, option = 'call', simulation = 0, steps = 1):
         random.seed(0)
         dT = self.maturity/steps
@@ -162,13 +162,11 @@ class Barrier_Option(Vanila_Option):
         for i in range(1, simulation + 1):
             sample_size = 1000*i
             terminal_stock_prices = [self.initial_stock_price]*sample_size
-            # norm_array = norm.rvs(size=sample_size)
 
             for _ in range(steps):
                 norm_array = norm.rvs(size=sample_size)
                 terminal_stock_prices = super()._Vanila_Option__terminalStockPrice(terminal_stock_prices, self.risk_free_rate, self.sigma, norm_array, dT)
                 terminal_stock_prices = [0 if price >= self.barrier_price else price for price in terminal_stock_prices]
-                # norm_array = norm.rvs(size=len(terminal_stock_prices))
 
             option_value_array = super().priceCallMC_List(np.array(terminal_stock_prices), self.strike_price, self.risk_free_rate, self.maturity) if option == 'call' else super().pricePutMC_List(np.array(terminal_stock_prices), self.strike_price, self.risk_free_rate, self.maturity)
             option_mean_MC[i-1] = np.mean(option_value_array)
@@ -178,22 +176,23 @@ class Barrier_Option(Vanila_Option):
         return VaR
 
 
+    # Return option VaR via MonteCarlo
     def optionMonteCarlo(self, no_options = 1, confidence_level = 99, premium = 0, future_return = []):
         portfolio_value = np.sort(np.array(future_return) - premium)*no_options
         return portfolio_value[int(((100-confidence_level)/100)*portfolio_value.size-1)]
 
 
 if __name__ == "__main__":
-    price_tool = Vanila_Option(100, 0.1, 0.3, 110, 0.5)
-    (mean, std) = price_tool.valueWithoutCVA('put', 'MC', 50)
-    (mean_bsm, std_bsm) = price_tool.valueWithoutCVA('put', 'BSM')
-    print(mean)
-    price_tool.estimationGraph(mean, std, mean_bsm)
+    # price_tool = Vanila_Option(100, 0.1, 0.3, 110, 0.5)
+    # (mean, std) = price_tool.valueWithoutCVA('put', 'MC', 50)
+    # (mean_bsm, std_bsm) = price_tool.valueWithoutCVA('put', 'BSM')
+    # print(mean)
+    # price_tool.estimationGraph(mean, std, mean_bsm)
 
-    price_tool = Barrier_Option(100, .1, 0.3, 110, 1, 120) #TODO: revert barrier price to 105
-    (mean, std) = price_tool.valueWithoutCVA(option='call', simulation = 50, steps=12)
+    price_tool = Barrier_Option(100, .08, 0.3, 100, 1, 150)
+    # (mean, std) = price_tool.valueWithoutCVA(option='call', simulation = 50, steps=12)
+    # print(mean[:10])
+    (mean, std, cva_mean, cva_std) = price_tool.valueWithCVA('call', 50, 12, 0.25, 175, 0.25, 0.2)
     print(mean[:10])
-    (mean, std, cva_mean, cva_std) = price_tool.valueWithCVA('call', 50, 12, 200, 0.25, 180, 0.2)
-    print(mean[:10])
-
+    print(cva_mean[:10])
 
