@@ -213,7 +213,7 @@ if __name__ == "__main__":
     # (mean, std) = price_tool.valueWithoutCVA(option='call', simulation = 50, steps=12)
     # print(mean[:10])
     (mean, std, cva_mean, cva_std) = price_tool.valueWithCVA(
-        'call', 50, 12, 0.25, 175, 0.25, 0.2)
+        'call', 50, 12, 0.25, 175, 0.25, 0.2, 200)
     print(mean[:10])
     print(cva_mean[:10])
 
