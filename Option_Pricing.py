@@ -13,7 +13,7 @@ class Vanila_Option:
         self.strike_price = strike_price
         self.maturity = maturity
 
-    def priceFourier(self):
+    def priceCOS(self):
         k_log = np.log(self.strike_price)
         t_max = 20
         N = 100
@@ -27,6 +27,20 @@ class Vanila_Option:
         second_integral = sum(
             (((np.exp(-1j*t_n*k_log)*self.c_M1(t_n)).imag)/t_n)*delta_t)
         return self.initial_stock_price*(0.5 + first_integral/np.pi) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(0.5+second_integral/np.pi)
+
+    def priceCOS_Exp(self, N, b2, b1):
+        price = self.v_n(self.strike_price, b2, b1, 0)*self.logchar_func(
+            0, self.initial_stock_price, self.risk_free_rate, self.sigma, self.strike_price, self.maturity)/2
+        for n in range(1, N):
+            price += self.logchar_func(n*np.pi/(b2-b1), self.initial_stock_price, self.risk_free_rate, self.sigma,
+                                       self.strike_price, self.maturity)*np.exp(-1j*n*np.pi*b1/(b2-b1))*self.v_n(self.strike_price, b2, b1, n)
+        return price.real*np.exp(-self.risk_free_rate*self.maturity)
+
+    def v_n(self, strike_price, b2, b1, n):
+        return 2*strike_price*(self.upsilon_n(b2, b1, b2, 0, n)-self.psi_n(b2, b1, b2, 0, n))/(b2-b1)
+
+    def logchar_func(self, u, initial_stock_price, risk_free_rate, sigma, strike_price, maturity):
+        return np.exp(1j*u*(np.log(initial_stock_price/strike_price)+(risk_free_rate-sigma**2/2)*maturity)-(sigma**2)*maturity*(u**2)/2)
 
     # Fourier charateristic function
     def c_M1(self, t):
@@ -241,7 +255,23 @@ if __name__ == "__main__":
     # (mean, std) = price_tool.valueWithoutCVA('put', 'MC', 50)
     # (mean_bsm, std_bsm) = price_tool.valueWithoutCVA('put', 'BSM')
     print(price_tool.priceCallBSM())
-    print(price_tool.priceFourier())
+    print(price_tool.priceCOS())
+
+    c1 = 0.06
+    c2 = 1*0.3**2
+    c4 = 0
+    L = 10
+    b1 = c1-L*np.sqrt(c2-np.sqrt(c4))
+    b2 = c1+L*np.sqrt(c2-np.sqrt(c4))
+    COS_callprice = [None]*50
+    for i in range(1, 51):
+        COS_callprice[i-1] = price_tool.priceCOS_Exp(i, b2, b1)
+    plt.plot(COS_callprice)
+    plt.plot([price_tool.priceCallBSM()]*50)
+    plt.xlabel("N")
+    plt.ylabel("Call Price")
+    plt.show()
+
     # price_tool.estimationGraph(mean, std, mean_bsm)
 
     # price_tool = Barrier_Option(100, .08, 0.3, 100, 1, 150)
