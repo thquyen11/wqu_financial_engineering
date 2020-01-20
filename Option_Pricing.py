@@ -35,7 +35,7 @@ class EuropeanOption:
         if type == 'call':
             return self.initial_stock_price*(0.5 + first_integral/np.pi) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(0.5 + second_integral/np.pi)
         elif type == 'put':
-            return -self.initial_stock_price*(first_integral/np.pi - 0.5) + np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(second_integral/np.pi - 0.5)
+            return self.initial_stock_price*(first_integral/np.pi - 0.5) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(second_integral/np.pi - 0.5)
 
     def priceDFT_COS(self, N, type='call'):
         c1 = self.risk_free_rate
@@ -314,7 +314,7 @@ if __name__ == "__main__":
     print("option price, Fourier-Cosine: ", putprice_cos)
     # plt.figure(figsize=(9,3))
     plt.subplot(311)
-    plt.plot(putprice_cos)
+    plt.plot(putprice_cos, 'blue')
     plt.plot([putprice_analytical]*50)
     plt.xlim(0,20)
     plt.ylim(0,20)
