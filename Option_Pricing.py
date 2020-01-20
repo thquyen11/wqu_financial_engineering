@@ -13,10 +13,16 @@ class EuropeanOption:
         self.strike_price = strike_price
         self.maturity = maturity
 
-    def priceDFT(self):
+    def setStrikePrice(self, new_strike):
+        try:
+            self.strike_price = new_strike
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def priceDFT(self, N, t_max, type='call'):
         k_log = np.log(self.strike_price)
-        t_max = 20
-        N = 100
         delta_t = t_max/N
         from_1_to_N = np.linspace(1, N, N)
         t_n = (from_1_to_N-1/2)*delta_t
@@ -26,27 +32,30 @@ class EuropeanOption:
             (((np.exp(-1j*t_n*k_log)*self.c_M2(t_n)).imag)/t_n)*delta_t)
         second_integral = sum(
             (((np.exp(-1j*t_n*k_log)*self.c_M1(t_n)).imag)/t_n)*delta_t)
-        return self.initial_stock_price*(0.5 + first_integral/np.pi) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(0.5+second_integral/np.pi)
+        if type == 'call':
+            return self.initial_stock_price*(0.5 + first_integral/np.pi) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(0.5 + second_integral/np.pi)
+        elif type == 'put':
+            return -self.initial_stock_price*(first_integral/np.pi - 0.5) + np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(second_integral/np.pi - 0.5)
 
-    def priceDFT_COS(self, N):
+    def priceDFT_COS(self, N, type='call'):
         c1 = self.risk_free_rate
         c2 = (self.sigma**2)*self.maturity
         c4 = 0
         L = 10  # TODO: how to get L value?
         b1 = c1-L*np.sqrt(c2-np.sqrt(c4))
         b2 = c1+L*np.sqrt(c2-np.sqrt(c4))
-        price = self.v_n(self.strike_price, b2, b1, 0)*self.logchar_func(
-            0, self.initial_stock_price, self.risk_free_rate, self.sigma, self.strike_price, self.maturity)/2
+        price = self.v_n(self.strike_price, b2, b1, 0, type)*self.logchar_func(
+            0, self.initial_stock_price, self.risk_free_rate, self.sigma, self.strike_price, self.maturity, 'cos')/2
         for n in range(1, N):
             price += self.logchar_func(n*np.pi/(b2-b1), self.initial_stock_price, self.risk_free_rate, self.sigma,
-                                       self.strike_price, self.maturity)*np.exp(-1j*n*np.pi*b1/(b2-b1))*self.v_n(self.strike_price, b2, b1, n)
+                                       self.strike_price, self.maturity, 'cos')*np.exp(-1j*n*np.pi*b1/(b2-b1))*self.v_n(self.strike_price, b2, b1, n, type)
         return price.real*np.exp(-self.risk_free_rate*self.maturity)
 
-    def priceFFT(self, b, n, N, delta, alpha):
-        log_strike = np.linspace(-b, b, N)
-        x = np.exp(1j*b*n*delta)*self.c_func(n*delta, alpha)*delta
+    def priceFFT(self, b, n, delta, alpha, log_strike):
+        x = np.exp(1j*b*n*delta)*self.c_func(n*delta, alpha, log_strike)*delta
         x[0] = x[0]*0.5
         x[-1] = x[-1]*0.5
+        # xhat = np.fft.fft(x).real
         xhat = self.fft(x).real
         return np.exp(-alpha*log_strike)*xhat/np.pi
 
@@ -62,18 +71,27 @@ class EuropeanOption:
             okm = ok*np.exp(-1j*2*np.pi*m/N)
             return np.concatenate((ek+okm, ek-okm))
 
-    def c_func(self, v, alpha):
+    def c_func(self, v, alpha, log_strike):
         val1 = np.exp(-self.risk_free_rate*self.maturity) * \
             self.logchar_func(v-(alpha+1)*1j, self.initial_stock_price,
-                              self.risk_free_rate, self.sigma, self.strike_price, self.maturity)
+                              self.risk_free_rate, self.sigma, log_strike, self.maturity, 'fft')
+        # val1 = np.exp(-self.risk_free_rate*self.maturity) * \
+        #     self.logchar_func(v-(alpha+1)*1j, self.initial_stock_price,
+        #                       self.risk_free_rate, self.sigma, self.strike_price, self.maturity, 'fft')
         val2 = alpha**2+alpha-v**2+1j*(2*alpha+1)*v
         return val1/val2
 
-    def v_n(self, strike_price, b2, b1, n):
-        return 2*strike_price*(self.upsilon_n(b2, b1, b2, 0, n)-self.psi_n(b2, b1, b2, 0, n))/(b2-b1)
+    def v_n(self, strike_price, b2, b1, n, type):
+        if type == 'call':
+            return 2*strike_price*(self.upsilon_n(b2, b1, b2, 0, n)-self.psi_n(b2, b1, b2, 0, n))/(b2-b1)
+        elif type == 'put':
+            return 2*strike_price*(self.psi_n(b2, b1, 0, b1, n) - self.upsilon_n(b2, b1, 0, b1, n))/(b2-b1)
 
-    def logchar_func(self, u, initial_stock_price, risk_free_rate, sigma, strike_price, maturity):
-        return np.exp(1j*u*(np.log(initial_stock_price/strike_price)+(risk_free_rate-sigma**2/2)*maturity)-(sigma**2)*maturity*(u**2)/2)
+    def logchar_func(self, u, initial_stock_price, risk_free_rate, sigma, strike_price, maturity, type):
+        if type == 'fft':
+            return np.exp(1j*u*(np.log(initial_stock_price)+(risk_free_rate-sigma**2/2)*maturity)-(sigma**2)*maturity*(u**2)/2)
+        elif type == 'cos':
+            return np.exp(1j*u*(np.log(initial_stock_price/strike_price)+(risk_free_rate-sigma**2/2)*maturity)-(sigma**2)*maturity*(u**2)/2)
 
     # Fourier charateristic function
     def c_M1(self, t):
@@ -141,33 +159,13 @@ class EuropeanOption:
 
     # Pricing Call Option via Black Scholes Model
     def priceBSM(self, type):
-        # d1 = self.__calcualte_d1(
-        #     self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
-        # d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
-        # return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
-        d1 = (math.log(initial_stock_price/strike_price) + (risk_free_rate+sigma**2/2)*maturity)/(sigma*math.sqrt(maturity))
-        d2 = d1 - sigma*math.sqrt(maturity)
+        d1 = (np.log(self.initial_stock_price/self.strike_price) + (self.risk_free_rate +
+                                                                      self.sigma**2/2)*self.maturity)/(self.sigma*np.sqrt(self.maturity))
+        d2 = d1 - self.sigma*np.sqrt(self.maturity)
         if type == 'call':
-            return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
-        elif type == 'call':
-            return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
-        else:
-            except Exception:
-                raise ValueError('Incorrect option type, only allow \'call\' or \'put\'')
-            return None
-
-    # Pricing Put Option via Black Scholes Model
-    # def pricePutBSM(self):
-    #     d1 = self.__calcualte_d1(
-    #         self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
-    #     d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
-    #     return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
-
-    # def __calcualte_d1(self, initial_stock_price, strike_price, risk_free_rate, sigma, maturity):
-    #     return (math.log(initial_stock_price/strike_price) + (risk_free_rate+sigma**2/2)*maturity)/(sigma*math.sqrt(maturity))
-
-    # def __calculate_d2(self, d1, sigma, maturity):
-    #     return d1 - sigma*math.sqrt(maturity)
+            return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*np.exp(-self.risk_free_rate*self.maturity)
+        elif type == 'put':
+            return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*np.exp(-self.risk_free_rate*self.maturity)
 
     def estimationGraph(self, mean_mc, std_mc, mean_bsm):
         plt.xlabel("Sample Size")
@@ -294,39 +292,56 @@ class Barrier_Option(EuropeanOption):
 
 
 if __name__ == "__main__":
-    initial_stock_price = 100
-    risk_free_rate = 0.06
-    stock_volatility = 0.3
-    strike_price = 110
-    maturity = 1
-    vanilaOption = EuropeanOption(
-        initial_stock_price, risk_free_rate, stock_volatility, strike_price, maturity)
-    print("option price, Black-Scholes formula: ", vanilaOption.priceBSM())
-    print("option price, Discrete Fourier: ", vanilaOption.priceDFT())
+    # Assignment 4
+    r = 0.1
+    K = 100
+    S0 = 120
+    T = 2
+    sigma = .25
 
-    # Fourier-Cosine expansion
-    COS_callprice = [None]*50
+    option = EuropeanOption(S0, r, sigma, K, T)
+    putprice_analytical = option.priceBSM('put')
+    print("put price Black-Scholes: ", putprice_analytical)
+
+    N = 200
+    t_max = 40
+    putprice_dft = option.priceDFT(N, t_max, 'put')
+    print("put price Fourier Transform: ", putprice_dft)
+
+    putprice_cos = [None]*50
     for i in range(1, 51):
-        COS_callprice[i-1] = vanilaOption.priceDFT_COS(i)
-    plt.plot(COS_callprice)
-    plt.plot([vanilaOption.priceBSM()]*50)
+        putprice_cos[i-1] = option.priceDFT_COS(i, 'put')
+    print("option price, Fourier-Cosine: ", putprice_cos)
+    # plt.figure(figsize=(9,3))
+    plt.subplot(311)
+    plt.plot(putprice_cos)
+    plt.plot([putprice_analytical]*50)
+    plt.xlim(0,20)
+    plt.ylim(0,20)
     plt.xlabel("Number of integral rectangles")
-    plt.ylabel("Call Price")
+    plt.ylabel("Put Price")
     plt.title("Fourier-Cosine Option Pricing")
-    plt.show()
 
-    # Fast Fourier Transform
-    N = 2**10 #TODO how to select N, delta, alpha?
+    N = 2**10
     delta = 0.25
-    alpha = 1.5
+    alpha = -1.5 # Call > 1, Put < -1
     n = np.array(range(N))
     delta_k = 2*np.pi/(N*delta)
     b = delta_k*(N-1)/2
-    fft_callprice = vanilaOption.priceFFT(b, n, N, delta, alpha)
     log_strike = np.linspace(-b, b, N)
-    print("option price, Fast Fourier: ", fft_callprice)
-    plt.plot(fft_callprice)
-    plt.plot([vanilaOption.priceBSM()]*N)
-    plt.xlabel("N")
-    plt.ylabel("Call Price")
+
+    putprice_fft = option.priceFFT(b, n, delta, alpha, log_strike)
+    print("option price, Fast Fourier Transform: ", putprice_fft)
+
+    option.setStrikePrice(np.exp(log_strike))
+    putprice_analytical = option.priceBSM('put')
+    print("option price, Black-Scholes: ", putprice_analytical)
+    plt.subplot(313)
+    plt.plot(np.exp(log_strike), putprice_fft, 'blue')
+    plt.plot(np.exp(log_strike), putprice_analytical, 'red')
+    plt.xlim(0,100)
+    plt.ylim(0,5)
+    plt.xlabel("Strike")
+    plt.ylabel("Put Price")
+    plt.title("Fast Fourier Option Pricing")
     plt.show()
