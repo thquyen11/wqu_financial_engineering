@@ -5,7 +5,7 @@ import random
 import matplotlib.pyplot as plt
 
 
-class Vanila_Option:
+class EuropeanOption:
     def __init__(self, initial_stock_price, risk_free_rate, sigma, strike_price, maturity):
         self.initial_stock_price = initial_stock_price
         self.risk_free_rate = risk_free_rate
@@ -178,7 +178,7 @@ class Vanila_Option:
         plt.show()
 
 
-class Barrier_Option(Vanila_Option):
+class Barrier_Option(EuropeanOption):
     def __init__(self, initial_stock_price, risk_free_rate, sigma, strike_price, maturity, barrier_price):
         super(Barrier_Option, self).__init__(initial_stock_price,
                                              risk_free_rate, sigma, strike_price, maturity)
@@ -299,17 +299,17 @@ if __name__ == "__main__":
     stock_volatility = 0.3
     strike_price = 110
     maturity = 1
-    price_tool = Vanila_Option(
+    vanilaOption = EuropeanOption(
         initial_stock_price, risk_free_rate, stock_volatility, strike_price, maturity)
-    print("option price, Black-Scholes formula: ", price_tool.priceBSM())
-    print("option price, Discrete Fourier: ", price_tool.priceDFT())
+    print("option price, Black-Scholes formula: ", vanilaOption.priceBSM())
+    print("option price, Discrete Fourier: ", vanilaOption.priceDFT())
 
     # Fourier-Cosine expansion
     COS_callprice = [None]*50
     for i in range(1, 51):
-        COS_callprice[i-1] = price_tool.priceDFT_COS(i)
+        COS_callprice[i-1] = vanilaOption.priceDFT_COS(i)
     plt.plot(COS_callprice)
-    plt.plot([price_tool.priceBSM()]*50)
+    plt.plot([vanilaOption.priceBSM()]*50)
     plt.xlabel("Number of integral rectangles")
     plt.ylabel("Call Price")
     plt.title("Fourier-Cosine Option Pricing")
@@ -322,11 +322,11 @@ if __name__ == "__main__":
     n = np.array(range(N))
     delta_k = 2*np.pi/(N*delta)
     b = delta_k*(N-1)/2
-    fft_callprice = price_tool.priceFFT(b, n, N, delta, alpha)
+    fft_callprice = vanilaOption.priceFFT(b, n, N, delta, alpha)
     log_strike = np.linspace(-b, b, N)
     print("option price, Fast Fourier: ", fft_callprice)
     plt.plot(fft_callprice)
-    plt.plot([price_tool.priceBSM()]*N)
+    plt.plot([vanilaOption.priceBSM()]*N)
     plt.xlabel("N")
     plt.ylabel("Call Price")
     plt.show()
