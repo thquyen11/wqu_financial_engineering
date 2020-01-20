@@ -13,7 +13,7 @@ class Vanila_Option:
         self.strike_price = strike_price
         self.maturity = maturity
 
-    def priceCOS(self):
+    def priceDFT(self):
         k_log = np.log(self.strike_price)
         t_max = 20
         N = 100
@@ -28,13 +28,46 @@ class Vanila_Option:
             (((np.exp(-1j*t_n*k_log)*self.c_M1(t_n)).imag)/t_n)*delta_t)
         return self.initial_stock_price*(0.5 + first_integral/np.pi) - np.exp(-self.risk_free_rate*self.maturity)*self.strike_price*(0.5+second_integral/np.pi)
 
-    def priceCOS_Exp(self, N, b2, b1):
+    def priceDFT_COS(self, N):
+        c1 = self.risk_free_rate
+        c2 = (self.sigma**2)*self.maturity
+        c4 = 0
+        L = 10  # TODO: how to get L value?
+        b1 = c1-L*np.sqrt(c2-np.sqrt(c4))
+        b2 = c1+L*np.sqrt(c2-np.sqrt(c4))
         price = self.v_n(self.strike_price, b2, b1, 0)*self.logchar_func(
             0, self.initial_stock_price, self.risk_free_rate, self.sigma, self.strike_price, self.maturity)/2
         for n in range(1, N):
             price += self.logchar_func(n*np.pi/(b2-b1), self.initial_stock_price, self.risk_free_rate, self.sigma,
                                        self.strike_price, self.maturity)*np.exp(-1j*n*np.pi*b1/(b2-b1))*self.v_n(self.strike_price, b2, b1, n)
         return price.real*np.exp(-self.risk_free_rate*self.maturity)
+
+    def priceFFT(self, b, n, N, delta, alpha):
+        log_strike = np.linspace(-b, b, N)
+        x = np.exp(1j*b*n*delta)*self.c_func(n*delta, alpha)*delta
+        x[0] = x[0]*0.5
+        x[-1] = x[-1]*0.5
+        xhat = self.fft(x).real
+        return np.exp(-alpha*log_strike)*xhat/np.pi
+
+    # Can use numpy fft function instead
+    def fft(self, x):
+        N = len(x)
+        if N == 1:
+            return x
+        else:
+            ek = self.fft(x[:-1:2])
+            ok = self.fft(x[1::2])
+            m = np.array(range(int(N/2)))
+            okm = ok*np.exp(-1j*2*np.pi*m/N)
+            return np.concatenate((ek+okm, ek-okm))
+
+    def c_func(self, v, alpha):
+        val1 = np.exp(-self.risk_free_rate*self.maturity) * \
+            self.logchar_func(v-(alpha+1)*1j, self.initial_stock_price,
+                              self.risk_free_rate, self.sigma, self.strike_price, self.maturity)
+        val2 = alpha**2+alpha-v**2+1j*(2*alpha+1)*v
+        return val1/val2
 
     def v_n(self, strike_price, b2, b1, n):
         return 2*strike_price*(self.upsilon_n(b2, b1, b2, 0, n)-self.psi_n(b2, b1, b2, 0, n))/(b2-b1)
@@ -251,33 +284,39 @@ class Barrier_Option(Vanila_Option):
 
 
 if __name__ == "__main__":
-    price_tool = Vanila_Option(100, 0.06, 0.3, 110, 1)
-    # (mean, std) = price_tool.valueWithoutCVA('put', 'MC', 50)
-    # (mean_bsm, std_bsm) = price_tool.valueWithoutCVA('put', 'BSM')
-    print(price_tool.priceCallBSM())
-    print(price_tool.priceCOS())
+    initial_stock_price = 100
+    risk_free_rate = 0.06
+    stock_volatility = 0.3
+    strike_price = 110
+    maturity = 1
+    price_tool = Vanila_Option(
+        initial_stock_price, risk_free_rate, stock_volatility, strike_price, maturity)
+    print("option price, Black-Scholes formula: ", price_tool.priceCallBSM())
+    print("option price, Discrete Fourier: ", price_tool.priceDFT())
 
-    c1 = 0.06
-    c2 = 1*0.3**2
-    c4 = 0
-    L = 10
-    b1 = c1-L*np.sqrt(c2-np.sqrt(c4))
-    b2 = c1+L*np.sqrt(c2-np.sqrt(c4))
+    # Fourier-Cosine expansion
     COS_callprice = [None]*50
     for i in range(1, 51):
-        COS_callprice[i-1] = price_tool.priceCOS_Exp(i, b2, b1)
+        COS_callprice[i-1] = price_tool.priceDFT_COS(i)
     plt.plot(COS_callprice)
     plt.plot([price_tool.priceCallBSM()]*50)
+    plt.xlabel("Number of integral rectangles")
+    plt.ylabel("Call Price")
+    plt.title("Fourier-Cosine Option Pricing")
+    plt.show()
+
+    # Fast Fourier Transform
+    N = 2**10 #TODO how to select N, delta, alpha?
+    delta = 0.25
+    alpha = 1.5
+    n = np.array(range(N))
+    delta_k = 2*np.pi/(N*delta)
+    b = delta_k*(N-1)/2
+    fft_callprice = price_tool.priceFFT(b, n, N, delta, alpha)
+    log_strike = np.linspace(-b, b, N)
+    print("option price, Fast Fourier: ", fft_callprice)
+    plt.plot(fft_callprice)
+    plt.plot([price_tool.priceCallBSM()]*N)
     plt.xlabel("N")
     plt.ylabel("Call Price")
     plt.show()
-
-    # price_tool.estimationGraph(mean, std, mean_bsm)
-
-    # price_tool = Barrier_Option(100, .08, 0.3, 100, 1, 150)
-    # # (mean, std) = price_tool.valueWithoutCVA(option='call', simulation = 50, steps=12)
-    # # print(mean[:10])
-    # (mean, std, cva_mean, cva_std) = price_tool.valueWithCVA(
-    #     'call', 50, 12, 0.25, 175, 0.25, 0.2)
-    # print(mean[:10])
-    # print(cva_mean[:10])
