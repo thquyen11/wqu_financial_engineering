@@ -115,7 +115,7 @@ class Vanila_Option:
             return (option_mean_MC, option_std_MC)
         elif method == 'BSM':
             if option == 'call':
-                return (self.priceCallBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma), self.sigma)
+                return (self.priceBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma), self.sigma)
             else:
                 return (self.pricePutBSM(self.initial_stock_price, self.strike_price, self.risk_free_rate, self.maturity, self.sigma), self.sigma)
 
@@ -140,24 +140,34 @@ class Vanila_Option:
         return np.exp(-risk_free_rate*maturity)*np.max(strike_price-terminal_stockprice, 0)
 
     # Pricing Call Option via Black Scholes Model
-    def priceCallBSM(self):
-        d1 = self.__calcualte_d1(
-            self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
-        d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
-        return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
+    def priceBSM(self, type):
+        # d1 = self.__calcualte_d1(
+        #     self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
+        # d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
+        # return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
+        d1 = (math.log(initial_stock_price/strike_price) + (risk_free_rate+sigma**2/2)*maturity)/(sigma*math.sqrt(maturity))
+        d2 = d1 - sigma*math.sqrt(maturity)
+        if type == 'call':
+            return self.initial_stock_price*norm.cdf(d1) - norm.cdf(d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
+        elif type == 'call':
+            return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
+        else:
+            except Exception:
+                raise ValueError('Incorrect option type, only allow \'call\' or \'put\'')
+            return None
 
     # Pricing Put Option via Black Scholes Model
-    def pricePutBSM(self):
-        d1 = self.__calcualte_d1(
-            self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
-        d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
-        return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
+    # def pricePutBSM(self):
+    #     d1 = self.__calcualte_d1(
+    #         self.initial_stock_price, self.strike_price, self.risk_free_rate, self.sigma, self.maturity)
+    #     d2 = self.__calculate_d2(d1, self.sigma, self.maturity)
+    #     return -self.initial_stock_price*norm.cdf(-d1) + norm.cdf(-d2)*self.strike_price*math.exp(-self.risk_free_rate*self.maturity)
 
-    def __calcualte_d1(self, initial_stock_price, strike_price, risk_free_rate, sigma, maturity):
-        return (math.log(initial_stock_price/strike_price) + (risk_free_rate+sigma**2/2)*maturity)/(sigma*math.sqrt(maturity))
+    # def __calcualte_d1(self, initial_stock_price, strike_price, risk_free_rate, sigma, maturity):
+    #     return (math.log(initial_stock_price/strike_price) + (risk_free_rate+sigma**2/2)*maturity)/(sigma*math.sqrt(maturity))
 
-    def __calculate_d2(self, d1, sigma, maturity):
-        return d1 - sigma*math.sqrt(maturity)
+    # def __calculate_d2(self, d1, sigma, maturity):
+    #     return d1 - sigma*math.sqrt(maturity)
 
     def estimationGraph(self, mean_mc, std_mc, mean_bsm):
         plt.xlabel("Sample Size")
@@ -291,7 +301,7 @@ if __name__ == "__main__":
     maturity = 1
     price_tool = Vanila_Option(
         initial_stock_price, risk_free_rate, stock_volatility, strike_price, maturity)
-    print("option price, Black-Scholes formula: ", price_tool.priceCallBSM())
+    print("option price, Black-Scholes formula: ", price_tool.priceBSM())
     print("option price, Discrete Fourier: ", price_tool.priceDFT())
 
     # Fourier-Cosine expansion
@@ -299,7 +309,7 @@ if __name__ == "__main__":
     for i in range(1, 51):
         COS_callprice[i-1] = price_tool.priceDFT_COS(i)
     plt.plot(COS_callprice)
-    plt.plot([price_tool.priceCallBSM()]*50)
+    plt.plot([price_tool.priceBSM()]*50)
     plt.xlabel("Number of integral rectangles")
     plt.ylabel("Call Price")
     plt.title("Fourier-Cosine Option Pricing")
@@ -316,7 +326,7 @@ if __name__ == "__main__":
     log_strike = np.linspace(-b, b, N)
     print("option price, Fast Fourier: ", fft_callprice)
     plt.plot(fft_callprice)
-    plt.plot([price_tool.priceCallBSM()]*N)
+    plt.plot([price_tool.priceBSM()]*N)
     plt.xlabel("N")
     plt.ylabel("Call Price")
     plt.show()
