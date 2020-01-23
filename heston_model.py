@@ -54,7 +54,7 @@ T = 0.5
 k_log = np.log(K)
 
 #Approximation information
-t_max = 30
+t_max = 30 # TODO: how to select
 N = 100
 
 #Characteristic function code

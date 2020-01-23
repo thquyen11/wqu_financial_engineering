@@ -16,13 +16,11 @@ T = 3
 test_strikes = np.linspace(80,120,41)
 
 # Call price under CEV
-z = 2 + 1/(1-gamma)
-
-
 def C(t, K):
     kappa = 2*r/(sigma**2*(1-gamma)*(np.exp(2*r*(1-gamma)*t)-1))
     x = kappa*S0**(2*(1-gamma))*np.exp(2*r*(1-gamma)*t)
     y = kappa*K**(2*(1-gamma))
+    z = 2 + 1/(1-gamma)
     return S0*(1-ncx2.cdf(y, z, x))-K*np.exp(-r*t)*ncx2.cdf(x, z-2, y)
 
 #Estimating partial derivatives
@@ -39,3 +37,4 @@ vol_est = np.sqrt(2)/test_strikes*np.sqrt((dC_dT+r*test_strikes*dC_dK)/d2C_dK2)
 plt.plot(test_strikes, sigma*test_strikes**(gamma-1))
 plt.plot(test_strikes, vol_est, '.')
 plt.show()
+
