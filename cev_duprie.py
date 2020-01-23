@@ -34,7 +34,13 @@ d2C_dK2 = (C(T,test_strikes+2*delta_K)-2*C(T,test_strikes+delta_K)+C(T,test_stri
 vol_est = np.sqrt(2)/test_strikes*np.sqrt((dC_dT+r*test_strikes*dC_dK)/d2C_dK2)
 
 #Plotting closed-form and Dupire equation
-plt.plot(test_strikes, sigma*test_strikes**(gamma-1))
-plt.plot(test_strikes, vol_est, '.')
+plt.subplot(211)
+plt.plot(test_strikes, sigma*test_strikes**(gamma-1), label="Closed-form")
+plt.grid(True)
+plt.legend()
+plt.subplot(212)
+plt.plot(test_strikes, vol_est, lw=3, label="Dupire Equation")
+plt.grid(True)
+plt.legend()
 plt.show()
 
