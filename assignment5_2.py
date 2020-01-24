@@ -34,13 +34,13 @@ K = 100
 #Sampling the price paths with 1000, 2000,...50000 sample
 opt_est = [0]*50
 for i in range(1, 51):
-    Z = norm.rvs(size=n_steps)
     s_path = np.zeros(1000*i)
     c_path = np.zeros(1000*i)
     
     for j in range(1000*i):
+        Z = norm.rvs(size=n_steps)
         s_path[j] = a_path(S0, r, sigma, Z, dT)[-1]
-        c_path[j] = priceCallCEV(s_path[-1], K, r, T)
+        c_path[j] = priceCallCEV(s_path[j], K, r, T)
     opt_est[i-1] = c_path.mean()
 
 plt.plot(opt_est)
