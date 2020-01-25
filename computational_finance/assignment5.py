@@ -6,10 +6,17 @@ import random
 import matplotlib.pyplot as plt
 
 
-def priceCall(s, strike, r, T):
+"""
+Returns:
+    number -- price of call option
+"""def priceCall(s, strike, r, T):
     return max(0, s-strike)*np.exp(-r*T)
 
-
+"""
+Calculate the stock price at each step using CEV model
+Returns:
+    number list -- stock price at each step
+"""
 def a_path(S0, r, sigma, Z, dT, steps, gamma):
     a_path = np.zeros(steps)
     a_path[0] = S0
@@ -62,7 +69,11 @@ def D(u):
     val2 = 1-g(u)*np.exp(-T*d(u))
     return (val1/val2)*xminus(u)
 
-
+"""
+Price the option (call/put) using Black-Scholes formula
+Returns:
+    number -- option price
+"""
 def priceBSM(type, initial_stock_price, strike_price, risk_free_rate, sigma, maturity):
     d1 = (np.log(initial_stock_price/strike_price) + (risk_free_rate +
                                                       sigma**2/2)*maturity)/(sigma*np.sqrt(maturity))
