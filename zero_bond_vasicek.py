@@ -69,17 +69,17 @@ Y_simtemp[:,0]=Y0
 correlations=rY_rho(t[0:-1],t[1:])
 Z_mont2=correlations*Z_mont1+np.sqrt(1-correlations**2)*Z_mont2
 
+# Method 1: Vasicek
 for i in range(n_years):
     r_simtemp[:,i+1]=vasi_mean(r_simtemp[:,i],t[i],t[i+1])+np.sqrt(vasi_var(t[i],t[i+1]))*Z_mont1[:,i]
-    Y_simtemp[:,i+1]=Y_mean(Y_simtemp[:,i],r_simtemp[:,i],t[i],t[i+1])+np.sqrt(Y_var(t[i],t[i+1]))*Z_mont1[:,i]
+    Y_simtemp[:,i+1]=Y_mean(Y_simtemp[:,i],r_simtemp[:,i],t[i],t[i+1])+np.sqrt(Y_var(t[i],t[i+1]))*Z_mont2[:,i]
 
-ZCB_prices = np.mean(np.exp(-Y_simtemp),axis=0)
+ZCB_prices = np.mean(np.exp(-Y_simtemp),axis=0) # mean Yt by each year
 
+# Method 2: Alternative to simulate Yt using only the rt, equation (3.4)
 # Yt estimates
 r_mat=np.cumsum(r_simtemp[:,0:-1],axis=1)*(t[1:]-t[0:-1])
 r_mat2=np.cumsum(r_simtemp[:,0:-1]+r_simtemp[:,1:],axis=1)/2*(t[1:]-t[0:-1])
-
-# Bond prices estimates
 squad_prices = np.ones(n_years+1) # At T0, bond price = 1
 trap_prices = np.ones(n_years+1)
 squad_prices[1:] = np.mean(np.exp(-r_mat),axis=0)

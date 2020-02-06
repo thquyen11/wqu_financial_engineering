@@ -71,7 +71,8 @@ def D(u):
 
 """
 Price the option (call/put) using Black-Scholes formula
-Returns:
+Returns:\
+    
     number -- option price
 """
 def priceBSM(type, initial_stock_price, strike_price, risk_free_rate, sigma, maturity):
