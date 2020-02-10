@@ -39,6 +39,7 @@ for i in range(n_years):
         np.sqrt(vasi_var(t[i], t[i+1]))*Z[:, i]
 
 s_mean = r0*np.exp(-alpha*t)+b*(1-np.exp(-alpha*t))
+print(s_mean)
 
 # Plotting the result
 t_graph = np.ones(r_sim.shape)*t

@@ -2,30 +2,36 @@ import math
 import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
-from assignment7_LFMM import forward_rate_libor
+from assignment7_interest_rate import discount_factor_libor
 
 
-def a_path(S, r, sigma, Z, dT):
-    return S*np.exp(np.cumsum((r-0.5*sigma*sigma)*dT+sigma*np.sqrt(dT)*Z, 1))
+def a_path(S0, f0, r, sigma, Z, dT, steps, gamma):
+    stock_cev_path = np.zeros([2,steps])
+    stock_cev_path[0,0] = S0
+    stock_cev_path[1,0] = f0
+    for i in range(1, steps):
+        sigma_dT = sigma*(stock_cev_path[:,i-1]**(gamma-1))
+        stock_cev_path[:,i] = stock_cev_path[:,i-1]*np.exp(((r-0.5*sigma_dT**2)*dT+sigma*np.sqrt(dT)*Z[:,i-1]))
+    return stock_cev_path
 
 
-def UpOutCall(p, K, L, r, T):
+def UpOutCall(p, K, L, discount_factor, T):
     if max(p) > L:
         return 0
     else:
-        return max(0, p[-1]-K)*np.exp(-r*T)
+        return max(0, p[-1]-K)*discount_factor*T
 
 
-# Stock info    
+# Stock info
 r = 0.08
-init_s = 100
+S0 = 100
 sigma_s = 0.3
 T = 1
 K = 100
 barrier = 150
 
 # Firm info
-init_f = 200    # TODO: estimate init_f
+init_f = 200
 sigma_f = 0.25
 debt = 175
 recovery = 0.25
@@ -34,39 +40,47 @@ corr_mat = np.array([[1, corr], [corr, 1]])
 L = np.linalg.cholesky(corr_mat)
 n_steps = 12
 dT = 1/n_steps
-S = np.array([[init_s], [init_f]])
+S = np.array([[S0], [init_f]])
 sigma = np.array([[sigma_s], [sigma_f]])
 
+# CEV model parameters
+gamma = 0.75
+beta = gamma + 1
+
 # Pricing Up-Out Barrier Call Option
-np.random.seed(10)
-opt_est = [None]*50
-opt_std = [None]*50
-d_opt_est = [None]*50
-d_opt_std = [None]*50
-cva_est = [None]*50
-cva_std = [None]*50
+np.random.seed(0)
+n_simulations = 100000
 
-predcorr_forward = forward_rate_libor(r)
-# print(predcorr_forward[1])
+opt_est = None
+opt_std = None
+d_opt_est = None
+d_opt_std = None
+cva_est = None
+cva_std = None
 
-# for i in range(1, 51):
-for i in range(1, 2):
-    p_array = np.zeros(1000*i)
-    l_array = np.zeros(1000*i)
-    for j in range(1000*i):
-        Z = np.matmul(L, norm.rvs(size=(2, 12)))
-        p_path = a_path(S, r, sigma, Z, dT)
-        s_path = p_path[0]
-        f_path = p_path[1]
-        p_array[j] = UpOutCall(s_path, K, barrier, r, T)
-        l_array[j] = np.exp(-r*T)*(1-recovery)*(f_path[-1] < debt)*p_array[j]
-    opt_est[i-1] = p_array.mean()
-    opt_std[i-1] = p_array.std()/np.sqrt(1000*i)
-    cva_est[i-1] = l_array.mean()
-    cva_std[i-1] = l_array.std()/np.sqrt(1000*i)
-    d_opt_est[i-1] = opt_est[i-1]-cva_est[i-1]
-    d_opt_std[i-1] = np.std(p_array-l_array)/np.sqrt(1000*i)
+p_array = np.zeros(n_simulations)
+l_array = np.zeros(n_simulations)
+for j in range(n_simulations):
+    Z = np.matmul(L, norm.rvs(size=(2, n_steps)))
+    price_paths = a_path(S0, init_f, r, sigma_s, Z, dT, n_steps, gamma)
+    stock_prices_path = price_paths[0]
+    firm_values_path = price_paths[1]
+    df_array = discount_factor_libor(r, n_simulations)
+    df_one_year = df_array[-1]
+    print("One year discount factor: ", df_one_year)
+    p_array[j] = UpOutCall(stock_prices_path, K, barrier, df_one_year, T)
+    l_array[j] = df_one_year*T*(1-recovery)*(firm_values_path[-1] < debt)*p_array[j]
+    
+opt_est = p_array.mean()
+opt_std = p_array.std()/np.sqrt(n_simulations)
+cva_est = l_array.mean()
+cva_std = l_array.std()/np.sqrt(n_simulations)
+d_opt_est = opt_est-cva_est
+d_opt_std = np.std(p_array-l_array)/np.sqrt(n_simulations)
 
+print("Option Price (default free) ",opt_est)
+print("Credit Valuation Adjustment ",cva_est)
+print("Option Price with CVA ",d_opt_est)
 
 
 

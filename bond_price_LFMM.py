@@ -68,6 +68,7 @@ predcorr_capfac[:, 1:]=np.cumprod(1+delta*predcorr_forward, axis = 1)
 # Inverting the capitalisation factors to imply bond prices (discount factors)
 mc_price=mc_capfac**(-1)
 predcorr_price=predcorr_capfac**(-1)
+print(predcorr_price)
 
 # Taking averages
 mc_final=np.mean(mc_price, axis = 0)
