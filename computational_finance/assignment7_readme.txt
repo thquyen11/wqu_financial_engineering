@@ -6,7 +6,7 @@ For each sample, iterate from 1 to 12 (12 months).
 - Calculate the stock price and firm value in each month
 
 Then, calculate the forward rate of each month by LIBOR rate model => find the 1 year forward rate
-- Calibrate the alpha, b, sigma in LIBOR model by using the given market zero-coupon-bond prices (lines 19 to 27 in file assignment7_interest_rate.py)
+- Calibrate the alpha, b, sigma in LIBOR model by using the given market zero-coupon-bond prices (lines 18 to 24 in file assignment7_interest_rate.py)
 
 Use 1 year forward rate to find the discount factor => price the up-and-out call option
 Calculate the CVA and call price after CVA

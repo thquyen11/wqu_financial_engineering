@@ -3,6 +3,7 @@ import numpy as np
 from scipy.stats import norm
 import matplotlib.pyplot as plt
 from assignment7_interest_rate import discount_factor_libor
+from assignment7_interest_rate import calibrate
 
 
 def a_path(S0, f0, r, sigma, Z, dT, steps, gamma):
@@ -47,6 +48,11 @@ sigma = np.array([[sigma_s], [sigma_f]])
 gamma = 0.75
 beta = gamma + 1
 
+# Calibration parameteres
+alpha = 0.2
+b = 0.08
+sigma = 0.025
+
 # Pricing Up-Out Barrier Call Option
 np.random.seed(0)
 n_simulations = 100000
@@ -57,17 +63,18 @@ d_opt_est = None
 d_opt_std = None
 cva_est = None
 cva_std = None
-
 p_array = np.zeros(n_simulations)
 l_array = np.zeros(n_simulations)
+
+opt_alpha,opt_b,opt_sigma = calibrate(alpha,b,sigma)
+
 for j in range(n_simulations):
     Z = np.matmul(L, norm.rvs(size=(2, n_steps)))
     price_paths = a_path(S0, init_f, r, sigma_s, Z, dT, n_steps, gamma)
     stock_prices_path = price_paths[0]
     firm_values_path = price_paths[1]
-    df_array = discount_factor_libor(r, n_simulations)
+    df_array = discount_factor_libor(r, n_simulations,opt_alpha,opt_b,opt_sigma)
     df_one_year = df_array[-1]
-    print("One year discount factor: ", df_one_year)
     p_array[j] = UpOutCall(stock_prices_path, K, barrier, df_one_year, T)
     l_array[j] = df_one_year*T*(1-recovery)*(firm_values_path[-1] < debt)*p_array[j]
     
@@ -81,6 +88,9 @@ d_opt_std = np.std(p_array-l_array)/np.sqrt(n_simulations)
 print("Option Price (default free) ",opt_est)
 print("Credit Valuation Adjustment ",cva_est)
 print("Option Price with CVA ",d_opt_est)
+
+print(p_array[:20])
+print(l_array[:20])
 
 
 

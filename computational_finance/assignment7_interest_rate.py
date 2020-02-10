@@ -4,10 +4,6 @@ import random
 import scipy.optimize
 
 
-# Parameters
-alpha = 0.2
-b = 0.08
-sigma = 0.025
 
 # Problem parameters
 t = np.array(range(12))
@@ -18,16 +14,19 @@ r0 = 0.08
 np.random.seed(0)
 market_bond_prices = np.array([99.38,98.76,98.15,97.54,96.94,96.34,95.74,95.16,94.57,93.99,93.42,92.85])
 
-def discount_factor_libor(r0, n_simulations):
-    # Minimizing F
+
+def calibrate(alpha,b,sigma):
     bnds = ((0,alpha),(0,b),(0,sigma))
     opt_val = scipy.optimize.fmin_slsqp(F,(0.3,0.05,0.03),bounds=bnds)
     opt_alpha = opt_val[0]
     opt_b = opt_val[1]
     opt_sig = opt_val[2]
+    return (opt_alpha,opt_b,opt_sig)
 
+
+def discount_factor_libor(r0, n_simulations,alpha,b,sigma):
     # Applying the algo
-    vasi_bond = bond_price(r0, 0, t, opt_alpha, opt_b, opt_sig)
+    vasi_bond = bond_price(r0, 0, t, alpha, b, sigma)
 
     mc_forward = np.ones([n_simulations, n_steps-1]) * \
         (vasi_bond[:-1]-vasi_bond[1:])/(2*vasi_bond[1:])
