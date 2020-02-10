@@ -89,8 +89,5 @@ print("Option Price (default free) ",opt_est)
 print("Credit Valuation Adjustment ",cva_est)
 print("Option Price with CVA ",d_opt_est)
 
-print(p_array[:20])
-print(l_array[:20])
-
 
 
