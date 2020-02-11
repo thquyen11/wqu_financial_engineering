@@ -4,7 +4,6 @@ import random
 import scipy.optimize
 
 
-
 # Problem parameters
 t = np.array(range(12))
 n_steps = len(t)
