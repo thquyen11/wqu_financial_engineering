@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 """
 Returns:
     number -- price of call option
-"""def priceCall(s, strike, r, T):
+"""
+def priceCall(s, strike, r, T):
     return max(0, s-strike)*np.exp(-r*T)
 
 """
