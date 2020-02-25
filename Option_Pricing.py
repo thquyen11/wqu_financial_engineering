@@ -1,9 +1,7 @@
 import numpy as np
 from scipy.stats import norm
 from scipy.stats import ncx2
-import math
-import random
-import matplotlib.pyplot as plt
+
 
 
 class EuropeanOption:
@@ -13,6 +11,7 @@ class EuropeanOption:
         self.sigma = sigma
         self.strike_price = strike_price
         self.maturity = maturity
+
 
     def setStrikePrice(self, new_strike):
         try:
@@ -159,6 +158,7 @@ class EuropeanOption:
         return np.exp(-risk_free_rate*maturity)*np.max(strike_price-terminal_stockprice, 0)
 
     # Pricing Call Option via Black Scholes Model
+
     def priceBSM(self, type):
         d1 = (np.log(self.initial_stock_price/self.strike_price) + (self.risk_free_rate +
                                                                       self.sigma**2/2)*self.maturity)/(self.sigma*np.sqrt(self.maturity))
@@ -293,6 +293,7 @@ class Barrier_Option(EuropeanOption):
 
 
 if __name__ == "__main__":
+
     # Assignment 4
     r = 0.1
     K = 100
@@ -346,3 +347,4 @@ if __name__ == "__main__":
     plt.ylabel("Put Price")
     plt.title("Fast Fourier Option Pricing")
     plt.show()
+
