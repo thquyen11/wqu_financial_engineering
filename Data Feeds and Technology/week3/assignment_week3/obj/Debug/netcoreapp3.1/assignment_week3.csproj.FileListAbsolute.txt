@@ -1,0 +1,16 @@
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.csprojAssemblyReference.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.AssemblyInfoInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.AssemblyInfo.cs
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.csproj.CoreCompileInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.deps.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.runtimeconfig.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.runtimeconfig.dev.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.dll
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\assignment_week3.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\Microsoft.Office.Interop.Excel.dll
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.csproj.CopyComplete
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.dll
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\obj\Debug\netcoreapp3.1\assignment_week3.genruntimeconfig.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\assignment_week3\bin\Debug\netcoreapp3.1\IronXL.dll

@@ -1,0 +1,57 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v3.1",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v3.1": {
+      "assignment_week3/1.0.0": {
+        "dependencies": {
+          "IronXL.Excel": "2020.9.0",
+          "Microsoft.Office.Interop.Excel": "15.0.4795.1000"
+        },
+        "runtime": {
+          "assignment_week3.dll": {}
+        }
+      },
+      "IronXL.Excel/2020.9.0": {
+        "runtime": {
+          "lib/netstandard2.0/IronXL.dll": {
+            "assemblyVersion": "2020.9.0.0",
+            "fileVersion": "2020.9.0.0"
+          }
+        }
+      },
+      "Microsoft.Office.Interop.Excel/15.0.4795.1000": {
+        "runtime": {
+          "lib/net20/Microsoft.Office.Interop.Excel.dll": {
+            "assemblyVersion": "15.0.0.0",
+            "fileVersion": "15.0.4795.1000"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "assignment_week3/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "IronXL.Excel/2020.9.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BcNUz48cnZR+zlxzamNiJGqcxYuYalNPwl6/k/n41z9Z8bUUZHc6d7YmItDG1xBbHxllLKFpXVoGU1QouBTaQw==",
+      "path": "ironxl.excel/2020.9.0",
+      "hashPath": "ironxl.excel.2020.9.0.nupkg.sha512"
+    },
+    "Microsoft.Office.Interop.Excel/15.0.4795.1000": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DfceS96ustwfL8EOJNNRtpk6b0RylhjNpgeeemuvi9X4GYks2UTeAimjSrdFEfuqRo5ibZ4Sd0gJIeDr9gMa6Q==",
+      "path": "microsoft.office.interop.excel/15.0.4795.1000",
+      "hashPath": "microsoft.office.interop.excel.15.0.4795.1000.nupkg.sha512"
+    }
+  }
+}
