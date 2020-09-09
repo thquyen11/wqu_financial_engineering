@@ -1,0 +1,13 @@
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.csprojAssemblyReference.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.AssemblyInfoInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.AssemblyInfo.cs
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.csproj.CoreCompileInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.deps.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.runtimeconfig.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.runtimeconfig.dev.json
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.dll
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\bin\Debug\netcoreapp3.1\assignment.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.dll
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\assignment\obj\Debug\netcoreapp3.1\assignment.genruntimeconfig.cache
