@@ -1,0 +1,15 @@
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe.config
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.pdb
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.csprojAssemblyReference.cache
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.csproj.CoreCompileInputs.cache
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.pdb
+C:\Users\Michael White\Documents\Visual Studio 2017\Projects\WorldQuant_Module3_CSA_SkeletonCode\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.csproj.ResolveComReference.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe.config
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\bin\Debug\WorldQuant_Module3_CSA_SkeletonCode.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.csproj.ResolveComReference.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.csproj.CoreCompileInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week3\WorldQuant_Module3_CSA_SkeletonCode\obj\Debug\WorldQuant_Module3_CSA_SkeletonCode.pdb
