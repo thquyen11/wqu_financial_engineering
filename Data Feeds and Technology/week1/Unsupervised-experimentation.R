@@ -7,7 +7,9 @@
 ############################################################
 # Getting the excel data in
 require(gdata)
-df = read.xls (("CountryData.xlsx"), sheet = 1, header = TRUE)
+library(readxl)
+# df <- read_excel("Git Hub/wqu_financial_engineering/Data Feeds and Technology/week1/CountryData.xlsx")
+df <- read.xls("Git Hub/wqu_financial_engineering/Data Feeds and Technology/week1/CountryData.xlsx")
 # Removing blank rows generated
 df<- df[c(1:21)]
 
@@ -161,5 +163,3 @@ cluster = as.numeric(km.res$cluster)
 par(mfrow=c(1,1))
 spdf = joinCountryData2Map(data.frame(cluster,df$CountryName), joinCode="NAME", nameJoinColumn="df.CountryName",verbose = TRUE,mapResolution = "low")
 mapCountryData(spdf, nameColumnToPlot="cluster", catMethod="fixedWidth",colourPalette=c("#2E9FDF","#00AFBB","#E7B800"), addLegend = FALSE, lwd = 0.5)
-
-

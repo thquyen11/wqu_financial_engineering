@@ -1,0 +1,7 @@
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\bin\Debug\Module2_PRA.exe.config
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\bin\Debug\Module2_PRA.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\bin\Debug\Module2_PRA.pdb
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\obj\Debug\Module2_PRA.csprojAssemblyReference.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\obj\Debug\Module2_PRA.csproj.CoreCompileInputs.cache
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\obj\Debug\Module2_PRA.exe
+C:\Users\thquy\Documents\Git Hub\wqu_financial_engineering\Data Feeds and Technology\week2\WQU_DFT_M2_CR_Skeleton\Module2_PRA\obj\Debug\Module2_PRA.pdb

@@ -1,0 +1,13 @@
+name: week1
+title: week1
+username:
+account: thquyen11
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2764568
+bundleId: 3603214
+url: https://thquyen11.shinyapps.io/week1/
+when: 1599501393.78907
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Unsupervised-experimentation.R
