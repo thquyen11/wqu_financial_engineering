@@ -1,0 +1,3 @@
+ssl_verify: true
+channels:
+  - defaults
